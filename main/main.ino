@@ -40,12 +40,12 @@ const String STATION = "statn-";
 const String VIADUCT = "bridg-";
 const String SEASIDE = "cside-";
 
-const int DOCKS_MAX = 16;
-const int CROSSING_MAX = 16;
-const int MOUNTAIN_MAX = 16;
-const int STATION_MAX = 16;
-const int VIADUCT_MAX = 16;
-const int SEASIDE_MAX = 16;
+const int DOCKS_MAX = 10;
+const int CROSSING_MAX = 10;
+const int MOUNTAIN_MAX = 10;
+const int STATION_MAX = 10;
+const int VIADUCT_MAX = 10;
+const int SEASIDE_MAX = 17;
 
 
 // These are common pins between breakout and shield
