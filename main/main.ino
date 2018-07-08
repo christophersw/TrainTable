@@ -178,7 +178,7 @@ void loop() {
   }
 
   /****************
-   * 3 - VIADUCT *
+   * 3 - STATION *
    ****************/
   if (digitalRead(REED_PIN_3) == LOW && lastPlayed != 3)
   {
@@ -199,12 +199,12 @@ void loop() {
     musicPlayer.playFullFile(fileCharArray);
   }
 
-  /****************
-   * 4 - VIADUCT *
-   ****************/
+  /*********************
+   * 4 - VIADUCT BRIDGE*
+   *********************/
   if (digitalRead(REED_PIN_4) == LOW && lastPlayed != 4)
   {
-    Serial.println("Train at the mountain tunnel.");
+    Serial.println("Train at the viaduct bridge.");
     lastPlayed=4;
 
     
