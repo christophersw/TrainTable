@@ -22,12 +22,31 @@
 #define SHIELD_RESET  -1      // VS1053 reset pin (unused!)
 #define SHIELD_CS     7      // VS1053 chip select pin (output)
 #define SHIELD_DCS    6      // VS1053 Data/command select pin (output)
-const int REED_PIN_0 = A0; // Pin connected to reed switch 0
-const int REED_PIN_1 = A1; // Pin connected to reed switch 1
-const int REED_PIN_2 = A2; // Pin connected to reed switch 2
-const int REED_PIN_3 = A3; // Pin connected to reed switch 3
-const int REED_PIN_4 = A4; // Pin connected to reed switch 4
-const int REED_PIN_5 = A5; // Pin connected to reed switch 5
+
+const int REED_PIN_0 = A8; // Docks
+const int REED_PIN_1 = A9; // Railroad Crossing
+const int REED_PIN_2 = A10; // Mountain Tunnel
+const int REED_PIN_3 = A11; // Station
+const int REED_PIN_4 = A12; // Viaduct Bridge
+const int REED_PIN_5 = A13; // Seaside
+const int LED_PIN_1 = A14; // Mountain LED
+const int LED_PIN_2 = A15; // Mountain LED
+
+//MP3s
+const String DOCKS = "docks-";
+const String CROSSING = "cross-";
+const String MOUNTAIN = "mount-";
+const String STATION = "statn-";
+const String VIADUCT = "bridg-";
+const String SEASIDE = "cside-";
+
+const int DOCKS_MAX = 16;
+const int CROSSING_MAX = 16;
+const int MOUNTAIN_MAX = 16;
+const int STATION_MAX = 16;
+const int VIADUCT_MAX = 16;
+const int SEASIDE_MAX = 16;
+
 
 // These are common pins between breakout and shield
 #define CARDCS 4     // Card chip select pin
@@ -35,10 +54,10 @@ const int REED_PIN_5 = A5; // Pin connected to reed switch 5
 #define DREQ 3       // VS1053 Data request, ideally an Interrupt pin
 
 Adafruit_VS1053_FilePlayer musicPlayer = 
-  // create breakout-example object!
-  // Adafruit_VS1053_FilePlayer(BREAKOUT_RESET, BREAKOUT_CS, BREAKOUT_DCS, DREQ, CARDCS);
-  // create shield-example object!
-  Adafruit_VS1053_FilePlayer(SHIELD_RESET, SHIELD_CS, SHIELD_DCS, DREQ, CARDCS);
+// create breakout-example object!
+// Adafruit_VS1053_FilePlayer(BREAKOUT_RESET, BREAKOUT_CS, BREAKOUT_DCS, DREQ, CARDCS);
+// create shield-example object!
+Adafruit_VS1053_FilePlayer(SHIELD_RESET, SHIELD_CS, SHIELD_DCS, DREQ, CARDCS);
   
 void setup() {
   Serial.begin(9600);
@@ -56,64 +75,172 @@ void setup() {
   }
 
   // Set volume for left, right channels. lower numbers == louder volume!
-  musicPlayer.setVolume(20,20);
+  musicPlayer.setVolume(10,10);
 
   // If DREQ is on an interrupt pin (on uno, #2 or #3) we can do background
   // audio playing
-  musicPlayer.useInterrupt(VS1053_FILEPLAYER_PIN_INT);  // DREQ int
+  //musicPlayer.useInterrupt(VS1053_FILEPLAYER_PIN_INT);  // DREQ int
 
   // Since the other end of the reed switch is connected to ground, we need
   // to pull-up the reed switch pin internally.
-  pinMode(REED_PIN_0, INPUT_PULLUP);
-//  pinMode(REED_PIN_1, INPUT_PULLUP);
-//  pinMode(REED_PIN_2, INPUT_PULLUP);
-//  pinMode(REED_PIN_3, INPUT_PULLUP);
-//  pinMode(REED_PIN_4, INPUT_PULLUP);
-//  pinMode(REED_PIN_5, INPUT_PULLUP);
+  pinMode(REED_PIN_0, INPUT_PULLUP); // Docks
+  pinMode(REED_PIN_1, INPUT_PULLUP); // Railroad Crossing
+  pinMode(REED_PIN_2, INPUT_PULLUP); // Mountain Tunnel
+  pinMode(REED_PIN_3, INPUT_PULLUP); // City Station
+  pinMode(REED_PIN_4, INPUT_PULLUP); // Viaduct Bridge
+  pinMode(REED_PIN_5, INPUT_PULLUP); // Seaside
+  pinMode(LED_PIN_1, OUTPUT); // Mountain LED 1 
+  pinMode(LED_PIN_2, OUTPUT); // Mountain LED 2
+  Serial.println("Testing Playback 5");
+  musicPlayer.playFullFile("docks-12.mp3");
+  
 }
 
+// Last triggered needs to be different from next triggered to catch "parking".
+int lastPlayed=0;
+int flickerTimer=0;
+
 void loop() {
+   Serial.println(lastPlayed);
+   
+   if(flickerTimer = 9000) {
+      analogWrite(LED_PIN_1, random(120,255));
+      analogWrite(LED_PIN_2, random(120,255));
+      flickerTimer = 0;
+   } else {
+    flickerTimer = flickerTimer + 1;
+   }
 
-  if (digitalRead(REED_PIN_0) == LOW) // If the pin reads low, the switch is closed.
+  /*************
+   * 0 - DOCKS *
+   *************/
+  if (digitalRead(REED_PIN_0) == LOW && lastPlayed != 0)
   {
-    Serial.println("Switch 0 closed");
-    // Play one file, don't return until complete
-    musicPlayer.playFullFile("track001.mp3");
+    Serial.println("Train at the docks.");
+    lastPlayed=0;
+
+    
+    String file = DOCKS;
+    file += random(10, DOCKS_MAX);
+    file += ".mp3";
+    
+    char fileCharArray[13];
+    
+    file.toCharArray(fileCharArray, 13);
+    
+    Serial.println(fileCharArray);
+    musicPlayer.playFullFile(fileCharArray);
   }
 
-  if (digitalRead(REED_PIN_1) == LOW) // If the pin reads low, the switch is closed.
+  /****************
+   * 1 - CROSSING *
+   ****************/
+  if (digitalRead(REED_PIN_1) == LOW && lastPlayed != 1)
   {
-    Serial.println("Switch 1 closed");
-    // Play one file, don't return until complete
-    musicPlayer.playFullFile("track002.mp3");
+    Serial.println("Train at the crossing.");
+    lastPlayed=1;
+
+    String file = CROSSING;
+    file += random(10, CROSSING_MAX);
+    file += ".mp3";
+    
+    char fileCharArray[13];
+    
+    file.toCharArray(fileCharArray, 13);
+    
+    Serial.println(fileCharArray);
+    
+    musicPlayer.playFullFile(fileCharArray);
   }
-//
-//   if (digitalRead(REED_PIN_2) == LOW) // If the pin reads low, the switch is closed.
-//  {
-//    Serial.println("Switch 2 closed");
-//    // Play one file, don't return until complete
-//    musicPlayer.playFullFile("track001.mp3");
-//  }
-//
-//   if (digitalRead(REED_PIN_3) == LOW) // If the pin reads low, the switch is closed.
-//  {
-//    Serial.println("Switch 3 closed");
-//    // Play one file, don't return until complete
-//    musicPlayer.playFullFile("track001.mp3");
-//  }
-//
-//   if (digitalRead(REED_PIN_4) == LOW) // If the pin reads low, the switch is closed.
-//  {
-//    Serial.println("Switch 4 closed");
-//    // Play one file, don't return until complete
-//    musicPlayer.playFullFile("track001.mp3");
-//  }
-//
-//   if (digitalRead(REED_PIN_5) == LOW) // If the pin reads low, the switch is closed.
-//  {
-//    Serial.println("Switch 5 closed");
-//    // Play one file, don't return until complete
-//    musicPlayer.playFullFile("track001.mp3");
-//  }
+
+  /****************
+   * 2 - MOUNTAIN *
+   ****************/
+  if (digitalRead(REED_PIN_2) == LOW && lastPlayed != 2)
+  {
+    Serial.println("Train at the mountain tunnel.");
+    lastPlayed=2;
+
+    
+    String file = MOUNTAIN;
+    file += random(10, MOUNTAIN_MAX);
+    file += ".mp3";
+    
+    char fileCharArray[13];
+    
+    file.toCharArray(fileCharArray, 13);
+    
+    Serial.println(fileCharArray);
+    
+    musicPlayer.playFullFile(fileCharArray);
+
+    // TODO: Light up LED!
+  }
+
+  /****************
+   * 3 - VIADUCT *
+   ****************/
+  if (digitalRead(REED_PIN_3) == LOW && lastPlayed != 3)
+  {
+    Serial.println("Train at the station.");
+    lastPlayed=3;
+
+    
+    String file = STATION;
+    file += random(10, STATION_MAX);
+    file += ".mp3";
+    
+    char fileCharArray[13];
+    
+    file.toCharArray(fileCharArray, 13);
+    
+    Serial.println(fileCharArray);
+    
+    musicPlayer.playFullFile(fileCharArray);
+  }
+
+  /****************
+   * 4 - VIADUCT *
+   ****************/
+  if (digitalRead(REED_PIN_4) == LOW && lastPlayed != 4)
+  {
+    Serial.println("Train at the mountain tunnel.");
+    lastPlayed=4;
+
+    
+    String file = VIADUCT;
+    file += random(10, VIADUCT_MAX);
+    file += ".mp3";
+    
+    char fileCharArray[13];
+    
+    file.toCharArray(fileCharArray, 13);
+    
+    Serial.println(fileCharArray);
+    
+    musicPlayer.playFullFile(fileCharArray);
+  }
+
+  /****************
+   * 5 - SEASIDE *
+   ****************/
+  if (digitalRead(REED_PIN_5) == LOW && lastPlayed != 5)
+  {
+    Serial.println("Train at the seaside.");
+    lastPlayed=5;
+
+    
+    String file = SEASIDE;
+    file += random(10, SEASIDE_MAX);
+    file += ".mp3";
+    
+    char fileCharArray[13];
+    
+    file.toCharArray(fileCharArray, 13);
+    
+    Serial.println(fileCharArray);
+    
+    musicPlayer.playFullFile(fileCharArray);
+  }
 }
 

@@ -1,5 +1,6 @@
 {
-    "board": "arduino:avr:uno",
+    "board": "esp8266:esp8266:huzzah",
     "port": "/dev/cu.SLAB_USBtoUART",
-    "sketch": "main/main.ino"
+    "sketch": "main/main.ino",
+    "configuration": "CpuFrequency=80,FlashSize=4M1M,LwIPVariant=v2mss536,Debug=Disabled,DebugLevel=None____,FlashErase=none,UploadSpeed=115200"
 }
