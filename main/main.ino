@@ -52,6 +52,8 @@ int SEASIDE_MAX = 0;
 
 // Percentage of the time we should play a "general clip"
 const int GENERAL_PERCENTAGE = 20;
+int generalRand = 0;
+int generalPlay = 0;
 
 // These are common pins between breakout and shield
 #define CARDCS 4 // Card chip select pin
@@ -85,7 +87,7 @@ void setup()
   }
 
   // Set volume for left, right channels. lower numbers == louder volume!
-  musicPlayer.setVolume(10, 10);
+  musicPlayer.setVolume(2, 2);
 
   // If DREQ is on an interrupt pin (on uno, #2 or #3) we can do background
   // audio playing
@@ -105,7 +107,10 @@ void setup()
 
   // list files
   countClips(SD.open("/"));
-
+  
+  generalRand = random(1,100);
+  generalPlay = random(1, GENERAL_MAX);
+  musicPlayer.playFullFile("bootup00.mp3");
   Serial.println("Setup complete. All Aboard!");
 }
 
@@ -119,8 +124,8 @@ void loop()
 
   if (flickerTimer = 9000)
   {
-    analogWrite(LED_PIN_1, random(120, 255));
-    analogWrite(LED_PIN_2, random(120, 255));
+    analogWrite(LED_PIN_1, random(100, 255));
+    analogWrite(LED_PIN_2, random(100, 255));
     flickerTimer = 0;
   }
   else
@@ -268,14 +273,15 @@ void countClips(File dir)
 
 void playFile(String stop, int max)
 {
-  int x = random(1,100);
   String file = "";
   char fileCharArray[13];
 
-  if(random(1,100) <= GENERAL_PERCENTAGE) {
+  if(generalRand <= GENERAL_PERCENTAGE) {
     file = GENERAL;
-    file += random(1, GENERAL_MAX);
+    file += generalPlay;
     file += ".mp3";
+    generalRand = random(1,100);
+    generalPlay = random(1, GENERAL_MAX);
   } else {
     file = stop;
     file += random(1, max);
