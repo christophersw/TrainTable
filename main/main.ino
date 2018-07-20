@@ -42,16 +42,16 @@ const String VIADUCT = "BRIDG-";
 const String SEASIDE = "CSIDE-";
 
 // Number of Audio Files
-int GENERAL_MAX = 0;
-int DOCKS_MAX = 0;
-int CROSSING_MAX = 0;
-int MOUNTAIN_MAX = 0;
-int STATION_MAX = 0;
-int VIADUCT_MAX = 0;
-int SEASIDE_MAX = 0;
+int GENERAL_MAX = 9;
+int DOCKS_MAX = 9;
+int CROSSING_MAX = 9;
+int MOUNTAIN_MAX = 9;
+int STATION_MAX = 9;
+int VIADUCT_MAX = 9;
+int SEASIDE_MAX = 9;
 
 // Percentage of the time we should play a "general clip"
-const int GENERAL_PERCENTAGE = 20;
+const int GENERAL_PERCENTAGE = 15;
 int generalRand = 0;
 int generalPlay = 0;
 
@@ -87,7 +87,7 @@ void setup()
   }
 
   // Set volume for left, right channels. lower numbers == louder volume!
-  musicPlayer.setVolume(2, 2);
+  musicPlayer.setVolume(15, 15);
 
   // If DREQ is on an interrupt pin (on uno, #2 or #3) we can do background
   // audio playing
@@ -109,8 +109,8 @@ void setup()
   countClips(SD.open("/"));
   
   generalRand = random(1,100);
-  generalPlay = random(1, GENERAL_MAX);
-  musicPlayer.playFullFile("bootup00.mp3");
+  generalPlay = random(10, GENERAL_MAX);
+  musicPlayer.playFullFile("BOOTUP00.mp3");
   Serial.println("Setup complete. All Aboard!");
 }
 
@@ -280,11 +280,10 @@ void playFile(String stop, int max)
     file = GENERAL;
     file += generalPlay;
     file += ".mp3";
-    generalRand = random(1,100);
-    generalPlay = random(1, GENERAL_MAX);
+    generalPlay = random(10, GENERAL_MAX);
   } else {
     file = stop;
-    file += random(1, max);
+    file += random(10, max);
     file += ".mp3";
   }
 
@@ -292,4 +291,5 @@ void playFile(String stop, int max)
   Serial.print("Playing file: ");
   Serial.println(fileCharArray);
   musicPlayer.playFullFile(fileCharArray);
+  generalRand = random(1,100);
 }
